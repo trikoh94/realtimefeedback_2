@@ -53,6 +53,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           'className': widget.className,
           'professor': widget.professor,
           'classNum': widget.classNum,
+          'classId': widget.classNum,
         });
         print("Feedback saved to Firestore successfully");
       } else {
@@ -169,16 +170,25 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
     return GestureDetector(
       onTap: () => selectEmojiAndLabel(emoji, label),
-      child: Container(
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.blue[200] : Colors.grey[200],
-          borderRadius: BorderRadius.circular(12),
-        ),
-        padding: EdgeInsets.all(10),
-        child: Text(
-          emoji,
-          style: TextStyle(fontSize: 40),
-        ),
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: isSelected ? Colors.blue[200] : Colors.grey[200],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: EdgeInsets.all(10),
+            child: Text(
+              emoji,
+              style: TextStyle(fontSize: 40),
+            ),
+          ),
+          SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(fontSize: 12, color: Colors.black54),
+          ),
+        ],
       ),
     );
   }
@@ -204,120 +214,120 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+        appBar: AppBar(
         title: Text('${widget.className} Feedback', style: TextStyle(color: Colors.white)),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.info_outline),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => InstructionScreen()),
-              );
-            },
-          ),
-        ],
-        backgroundColor: Colors.blue[800],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Text(
-                'How do you feel about ${widget.className}?',
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue[800],
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Professor: ${widget.professor}, Class #: ${widget.classNum}',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black54,
-              ),
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildEmojiButton('😊', 'Joyful'),
-                _buildEmojiButton('😟', 'Negative'),
-                _buildEmojiButton('🖥️✖️', 'Technical Problem'),
-                _buildEmojiButton('❓', 'Difficult'),
-              ],
-            ),
-            SizedBox(height: 20),
-            TextField(
-              controller: messageController,
-              decoration: InputDecoration(
-                labelText: 'Leave a message',
-                border: OutlineInputBorder(),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blue[800]!, width: 2),
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: submitFeedback,
-                  child: Text('Submit Feedback'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[200],
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                    textStyle:
-                    TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 20),
-                ElevatedButton(
-                  onPressed: goToSuccessScreen,
-                  child: Text('Class_end'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red[200],
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                    textStyle:
-                    TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Your Feedback:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: emojiFeedback.length,
-                itemBuilder: (context, index) {
-                  final feedback = emojiFeedback[index];
-                  return _buildChatBubble(
-                    feedback['emoji'],
-                    feedback['message'],
-                    feedback['label'],
-                    feedback['timestamp'],
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+    actions: [
+    IconButton(
+    icon: Icon(Icons.info_outline),
+    onPressed: () {
+    Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => InstructionScreen()),
+    );
+    },
+    ),
+    ],
+    backgroundColor: Colors.blue[800],
+    ),
+    body: Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+    Center(
+    child: Text(
+    'How do you feel about ${widget.className}?',
+    style: TextStyle(
+    fontSize: 25,
+    fontWeight: FontWeight.bold,
+    color: Colors.blue[800],
+    ),
+    ),
+    ),
+    SizedBox(height: 10),
+    Text(
+    'Professor: ${widget.professor}, Class #: ${widget.classNum}',
+    style: TextStyle(
+    fontSize: 16,
+    color: Colors.black54,
+    ),
+    ),
+    SizedBox(height: 18),
+    Row(
+    mainAxisAlignment: MainAxisAlignment.spaceAround,
+    children: [
+    _buildEmojiButton('😊', 'Understand'),
+    _buildEmojiButton('🤩', 'Interested'),
+    _buildEmojiButton('😕', 'Confused'),
+    _buildEmojiButton('❓', 'Question'),
+    _buildEmojiButton('✏️', 'Others'),
+    ],
+    ),
+    SizedBox(height: 20),
+    TextField(
+    controller: messageController,
+    decoration: InputDecoration(
+    labelText: 'Leave a message',
+    border: OutlineInputBorder(),
+    focusedBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.blue[800]!, width: 2),
+    ),
+    ),
+    ),
+    SizedBox(height: 20),
+    Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+    ElevatedButton(
+    onPressed: submitFeedback,
+    child: Text('Submit Feedback'),
+    style: ElevatedButton.styleFrom(
+    backgroundColor: Colors.blue[200],
+    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+    textStyle:
+    TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(12),
+    ),
+    ),
+    ),
+    SizedBox(width: 20),
+    ElevatedButton(
+    onPressed: goToSuccessScreen,
+    child: Text('Class End'),
+    style: ElevatedButton.styleFrom(
+    backgroundColor: Colors.red[300],
+    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 70),
+    textStyle:
+    TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+    shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(30),
+    ),
+    ),
+    ),
+    ],
+    ),
+    SizedBox(height: 20),
+    Text(
+    'Your Feedback:',
+    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    ),
+    Expanded(
+    child: ListView.builder(
+    itemCount: emojiFeedback.length,
+    itemBuilder: (context, index) {
+    final feedback = emojiFeedback[index];
+    return _buildChatBubble(
+    feedback['emoji'],
+    feedback['message'],
+    feedback['label'], feedback['timestamp'],
+    );
+    },
+    ),
+    ),
+    ],
+    ),
+    ),
     );
   }
 }

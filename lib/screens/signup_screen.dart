@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'home_screen.dart';  // Import HomeScreen
+import 'professor_console_screen.dart';  // Import ProfessorConsoleScreen
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -15,6 +17,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _nameController = TextEditingController();  // New controller for name
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+
+  String _selectedRole = 'student';  // Default role set to student
 
   Future<void> _signUpWithEmailAndPassword() async {
     if (_formKey.currentState!.validate()) {
@@ -38,11 +42,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
         // Set the user's display name after successful signup
         await userCredential.user!.updateDisplayName(_nameController.text.trim());
 
-        // Navigate to HomeScreen and pass the name to it
+        // Save the role in Firestore
+        await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
+          'email': _emailController.text.trim(),
+          'role': _selectedRole,  // Save the selected role
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
+        // Navigate to the correct screen based on the role
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomeScreen(name: _nameController.text.trim()), // Pass the name here
+            builder: (context) => (_selectedRole == 'professor')
+                ? ProfessorConsoleScreen(sessionId: 'your_session_id', className: '', classId: '', professor: '',)  // Navigate to Professor Console
+                : HomeScreen(name: _nameController.text.trim()),  // Navigate to HomeScreen for student
           ),
         );
       } on FirebaseAuthException catch (e) {
@@ -201,6 +214,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                     ),
                     SizedBox(height: 20),
+
+                    // Role selection dropdown
+                    DropdownButton<String>(
+                      value: _selectedRole,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedRole = newValue!;
+                        });
+                      },
+                      items: <String>['student', 'professor']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value == 'student' ? 'Student' : 'Professor'),
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 20),
+
                     _isLoading
                         ? CircularProgressIndicator()
                         : ElevatedButton(
